@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>HEYCOLOUR</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
+  <link href="main_final.css" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="v1_17.png" />
+  <style>
+    input[type="color"] {
+      position: absolute;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="overlay">
+  <span class="overlay-text">HEYCOLOUR</span>
+</div>
+
+</div>
+
+  <div class="v1_38">
+
+   
+    <div class="v1_20"></div>
+    <div class="v1_21"></div>
+
+   
+    <div class="v1_8">
+      <div class="v1_6">
+        <div class="v1_11"></div>
+          <div class="v1_14"></div>
+          <div class="v1_12"></div>
+      </div>
+      <div class="v1_9"></div>
+      <span class="v1_5">HEYCOLOUR</span>
+     
+     
+      <div class="circle-wrapper">
+  <div class="v1_18"></div>
+  <div class="v1_17"></div>
+</div>
+    </div>
+
+    <div class="content-wrapper">
+
+     
+      <div class="v1_26">
+        <div class="v1_23"></div>
+        <span class="v1_25">CHOOSE YOUR COLOUR</span>
+      </div>
+
+      
+      <div class="v1_31" id="mainColorBlock" onclick="openColorPicker()"></div>
+      <input type="color" id="colorPicker" oninput="applyColor(this.value)" />
+
+      <select id="colorType" style="margin: 20px auto; font-size: 16px; padding: 10px;">
+  <option value="accent">Accent</option>
+  <option value="background">Background</option>
+  <option value="text">Text</option>
+  <option value="border">Border</option>
+</select>
+
+
+      
+      <div class="v1_27"></div>
+      <span class="v1_29">BETTER MATCHING:</span>
+
+     
+      <div class="v1_36" id="match1"></div>
+      <div class="v1_32" id="match2"></div>
+      <div class="v1_34" id="match3"></div>
+
+    </div>
+  </div>
+
+  <script>
+    function openColorPicker() {
+      const picker = document.getElementById("colorPicker");
+      picker.click();
+    }
+
+    function applyColor(hex) {
+  const block = document.getElementById("mainColorBlock");
+  const type = document.getElementById("colorType").value;
+  block.style.backgroundColor = hex;
+
+  const matches = getMatchingColors(hex, type);
+  document.getElementById('match1').style.backgroundColor = matches[0];
+  document.getElementById('match2').style.backgroundColor = matches[1];
+  document.getElementById('match3').style.backgroundColor = matches[2];
+}
+
+ function getMatchingColors(hex, type) {
+  try {
+    const hsl = hexToHSL(hex);
+    switch (type) {
+      case "background":
+        return [
+          HSLToHex(hsl.h, hsl.s * 0.2, Math.min(95, hsl.l + 20)),
+          HSLToHex(hsl.h, hsl.s * 0.1, Math.min(98, hsl.l + 30)),
+          HSLToHex(hsl.h, hsl.s * 0.15, Math.min(90, hsl.l + 15)),
+        ];
+      case "text":
+        return [
+          HSLToHex(hsl.h, Math.min(100, hsl.s + 20), Math.max(10, hsl.l - 30)),
+          HSLToHex(hsl.h, hsl.s, Math.max(15, hsl.l - 20)),
+          HSLToHex(hsl.h, hsl.s * 0.8, Math.max(20, hsl.l - 15)),
+        ];
+      case "border":
+        return [
+          HSLToHex(hsl.h, hsl.s, hsl.l),
+          HSLToHex(hsl.h, hsl.s * 0.9, Math.max(30, hsl.l - 10)),
+          HSLToHex(hsl.h, hsl.s * 0.7, Math.max(40, hsl.l - 5)),
+        ];
+      case "accent":
+      default:
+        return [
+          HSLToHex(hsl.h, Math.min(100, hsl.s + 10), Math.max(40, hsl.l - 10)),
+          HSLToHex(hsl.h, Math.min(100, hsl.s + 20), hsl.l),
+          HSLToHex(hsl.h, hsl.s, Math.min(90, hsl.l + 10)),
+        ];
+    }
+  } catch (e) {
+    return ['#D9D9D9', '#D9D9D9', '#D9D9D9'];
+  }
+}
+
+
+
+    function hexToHSL(H) {
+      let r = 0, g = 0, b = 0;
+      if (H.length === 4) {
+        r = "0x" + H[1] + H[1];
+        g = "0x" + H[2] + H[2];
+        b = "0x" + H[3] + H[3];
+      } else if (H.length === 7) {
+        r = "0x" + H[1] + H[2];
+        g = "0x" + H[3] + H[4];
+        b = "0x" + H[5] + H[6];
+      }
+      r /= 255;
+      g /= 255;
+      b /= 255;
+      let cmin = Math.min(r, g, b),
+          cmax = Math.max(r, g, b),
+          delta = cmax - cmin,
+          h = 0,
+          s = 0,
+          l = 0;
+
+      if (delta === 0)
+        h = 0;
+      else if (cmax === r)
+        h = ((g - b) / delta) % 6;
+      else if (cmax === g)
+        h = (b - r) / delta + 2;
+      else
+        h = (r - g) / delta + 4;
+
+      h = Math.round(h * 60);
+      if (h < 0) h += 360;
+
+      l = (cmax + cmin) / 2;
+      s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
+      s = +(s * 100).toFixed(1);
+      l = +(l * 100).toFixed(1);
+
+      return { h: h, s: s, l: l };
+    }
+
+    function HSLToHex(h, s, l) {
+      s /= 100;
+      l /= 100;
+
+      let c = (1 - Math.abs(2 * l - 1)) * s,
+          x = c * (1 - Math.abs((h / 60) % 2 - 1)),
+          m = l - c / 2,
+          r = 0,
+          g = 0,
+          b = 0;
+
+      if (0 <= h && h < 60) {
+        r = c; g = x; b = 0;
+      } else if (60 <= h && h < 120) {
+        r = x; g = c; b = 0;
+      } else if (120 <= h && h < 180) {
+        r = 0; g = c; b = x;
+      } else if (180 <= h && h < 240) {
+        r = 0; g = x; b = c;
+      } else if (240 <= h && h < 300) {
+        r = x; g = 0; b = c;
+      } else if (300 <= h && h < 360) {
+        r = c; g = 0; b = x;
+      }
+
+      r = Math.round((r + m) * 255).toString(16).padStart(2, '0');
+      g = Math.round((g + m) * 255).toString(16).padStart(2, '0');
+      b = Math.round((b + m) * 255).toString(16).padStart(2, '0');
+
+      return `#${r}${g}${b}`;
+    }
+  </script>
+  <script>
+  document.querySelector('.v1_5').addEventListener('click', () => {
+    location.reload(); 
+  });
+</script>
+<script>
+
+  document.querySelector('.v1_5').addEventListener('click', () => location.reload());
+  document.querySelector('.v1_9').addEventListener('click', () => location.reload());
+</script>
+<script>
+  function showOverlayThenReload() {
+    const overlay = document.createElement("div");
+    overlay.id = "overlay";
+    overlay.innerHTML = '<span class="overlay-text">HEYCOLOUR</span>';
+    document.body.appendChild(overlay);
+
+  
+    requestAnimationFrame(() => {
+      overlay.classList.add("show");
+    });
+
+   
+    setTimeout(() => location.reload(), 600);
+  }
+
+ 
+  document.querySelector('.v1_5').addEventListener('click', showOverlayThenReload);
+  document.querySelector('.v1_9').addEventListener('click', showOverlayThenReload);
+  
+
+  window.addEventListener('load', () => {
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.classList.add('show');
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 500);
+      }, 500);
+    }
+  });
+</script>
+<script>
+  function copyColorFromElement(id) {
+    const el = document.getElementById(id);
+    const color = window.getComputedStyle(el).backgroundColor;
+    const hex = rgbToHex(color);
+
+    navigator.clipboard.writeText(hex).then(() => {
+      showCopiedFeedback(el);
+    });
+  }
+
+  function rgbToHex(rgb) {
+    const result = rgb.match(/\d+/g).map(Number);
+    return (
+      "#" +
+      result
+        .map(x => x.toString(16).padStart(2, '0'))
+        .join('')
+    );
+  }
+
+  function showCopiedFeedback(element) {
+    const feedback = document.createElement("div");
+    feedback.textContent = "Copied!";
+    feedback.style.position = "absolute";
+    feedback.style.color = "#fff";
+    feedback.style.background = "#000a";
+    feedback.style.padding = "5px 10px";
+    feedback.style.borderRadius = "12px";
+    feedback.style.fontSize = "14px";
+    feedback.style.zIndex = "1000";
+    feedback.style.transition = "opacity 0.3s ease";
+    feedback.style.pointerEvents = "none";
+
+   
+    const rect = element.getBoundingClientRect();
+    feedback.style.left = rect.left + window.scrollX + rect.width / 2 - 30 + "px";
+    feedback.style.top = rect.top + window.scrollY - 30 + "px";
+
+    document.body.appendChild(feedback);
+
+    setTimeout(() => feedback.style.opacity = "0", 700);
+    setTimeout(() => feedback.remove(), 1000);
+  }
+
+  ['match1', 'match2', 'match3'].forEach(id => {
+    document.getElementById(id).addEventListener('click', () => copyColorFromElement(id));
+  });
+</script>
+<script>
+  const rgbCircle = document.querySelector('.v1_17');
+
+  rgbCircle.addEventListener('click', () => {
+    rgbCircle.classList.add('animate');
+    setTimeout(() => {
+      rgbCircle.classList.remove('animate');
+    }, 800); 
+  });
+  
+</script>
+
+
+
+
+  <!-- Меню -->
+  <div id="sidebarMenu" style="position: fixed; top: 20px; left: -260px; width: 220px; height: auto; background: rgba(80, 95, 80, 0.6); backdrop-filter: blur(10px); border-radius: 24px; padding: 20px; transition: left 0.4s ease; z-index: 999;">
+    <ul style="list-style: none; padding: 0; font-size: 16px; font-family: 'Inter', sans-serif; text-transform: uppercase;">
+      <li style="margin-bottom: 16px;"><a href='index_final.html' style='color: white; text-decoration: none;border: 2px solid rgb(56, 70, 54); background-color: rgba(81,96,81,1); padding: 10px 16px; display: inline-block; border-radius: 18px;'>MATCH COLOUR'S</a></li>
+      <li><a href="gradient.html" style="border: 2px solid rgb(56, 70, 54);">GRADIENT</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const menuToggle = document.querySelector('.v1_6');
+    const menu = document.getElementById('sidebarMenu');
+
+    menuToggle.onclick = (e) => {
+      e.stopPropagation();
+      menu.style.left = menu.style.left === '20px' ? '-260px' : '20px';
+    };
+
+    function closeMenu(e) {
+      if (!menu.contains(e.target) && menu.style.left === '20px') {
+        menu.style.left = '-260px';
+      }
+    }
+
+    document.body.addEventListener('click', closeMenu);
+  </script>
+
+
+  <!-- Меню -->
+  <div id="sidebarMenu" style="position: fixed; top: 20px; left: -260px; width: 260px; height: auto; background: rgba(80, 95, 80, 0.6); backdrop-filter: blur(12px); border-radius: 24px; padding: 30px; transition: left 0.4s ease; z-index: 999;">
+    <ul style="list-style: none; padding: 0; font-size: 16px; font-family: 'Inter', sans-serif; text-transform: uppercase;">
+      <li style="margin-bottom: 20px;"><a href='index_final.html' style='color: white; text-decoration: none; background-color: rgba(81,96,81,1); padding: 12px 20px; display: inline-block; border-radius: 18px;'>MATCH COLOUR'S</a></li>
+      <li><a href='gradient.html' style='border: 2px solid rgb(56, 70, 54);color: white; text-decoration: none;  background-color: rgba(81,96,81,1); padding: 12px 20px; display: inline-block; border-radius: 18px;'>GRADIENT</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const menuToggle = document.querySelector('.v1_6');
+    const menu = document.getElementById('sidebarMenu');
+
+    menuToggle.onclick = (e) => {
+      e.stopPropagation();
+      menu.style.left = menu.style.left === '20px' ? '-260px' : '20px';
+    };
+
+    function closeMenu(e) {
+      if (!menu.contains(e.target) && menu.style.left === '20px') {
+        menu.style.left = '-260px';
+      }
+    }
+
+    document.body.addEventListener('click', closeMenu);
+  </script>
+
+
+  <div id="sidebarMenu" style="position: fixed; top: 20px; left: -300px; width: 280px; max-height: 500px; background: rgba(80, 95, 80, 0.6); backdrop-filter: blur(14px); border-radius: 28px; padding: 35px; transition: left 0.4s ease; z-index: 999;">
+    <ul style="list-style: none; padding: 0; font-size: 16px; font-family: 'Inter', sans-serif; text-transform: uppercase;">
+      <li style="margin-bottom: 20px;"><a href='index_final.html' style='color: white; text-decoration: none; background-color: rgba(81,96,81,1); padding: 12px 20px; display: inline-block; border-radius: 18px;'>MATCH COLOUR'S</a></li>
+      <li><a href='gradient.html' style='color: white; text-decoration: none; background-color: rgba(81,96,81,1); padding: 12px 20px; display: inline-block; border-radius: 18px;'>GRADIENT</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const menuToggle = document.querySelector('.v1_6');
+    const menu = document.getElementById('sidebarMenu');
+
+    menuToggle.onclick = (e) => {
+      e.stopPropagation();
+      menu.style.left = menu.style.left === '20px' ? '-300px' : '20px';
+    };
+
+    function closeMenu(e) {
+      if (!menu.contains(e.target) && menu.style.left === '20px') {
+        menu.style.left = '-300px';
+      }
+    }
+
+    document.body.addEventListener('click', closeMenu);
+  </script>
+
+  <style>
+    .v1_6 {
+      cursor: pointer;
+      position: relative;
+      width: 71px;
+      height: 71px;
+    }
+    .v1_6 > div {
+      position: absolute;
+      left: 11px;
+      height: 6px;
+      width: 45px;
+      background: rgba(217, 217, 217, 1);
+      border-radius: 3px;
+      pointer-events: none;
+    }
+    .v1_11 { top: 19px; }
+    .v1_12 { top: 32px; }
+    .v1_14 { top: 45px; }
+  </style>
+
+</body>
+</html>

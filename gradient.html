@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Gradient - HEYCOLOUR</title>
+  <link href="https://fonts.googleapis.com/css?family=Inter&display=swap" rel="stylesheet" />
+  <link href="main_final.css" rel="stylesheet" />
+  <link rel="icon" type="image/png" href="v1_17.png" />
+
+</head>
+
+  <div id="overlay">
+    <span class="overlay-text">HEYCOLOUR</span>
+  </div>
+
+<body onclick="closeMenu(event)">
+  <div class="v1_38">
+    <div class="v1_20"></div>
+    <div class="v1_21"></div>
+    <div class="v1_8">
+      <div class="v1_6" id="menuToggle">
+        <div class="v1_11"></div>
+        <div class="v1_14"></div>
+        <div class="v1_12"></div>
+      </div>
+      <div class="v1_9"></div>
+      <span class="v1_5">HEYCOLOUR</span>
+     
+      <div class="circle-wrapper">
+        <div class="v1_18"></div>
+        <div class="v1_17"></div>
+      </div>
+    </div>
+
+    <div class="content-wrapper">
+      <div class="v1_26">
+        <div class="v1_23"></div>
+        <span class="v1_25">CHOOSE YOUR COLOURS</span>
+      </div>
+
+      <div style="text-align: center;">
+        <select id="colorCount" onchange="renderColorInputs()">
+          <option value="2">2 Colors</option>
+          <option value="3">3 Colors</option>
+          <option value="4">4 Colors</option>
+        </select>
+      </div>
+
+      <div id="colorContainer"></div>
+
+      <div id="gradientPreview" style="width: 80%; height: 200px; margin: 40px auto; border: 2px solid rgb(70, 69, 69); border-radius: 24px; background: linear-gradient(to right, #949494, #808080);"></div>
+    </div>
+  </div>
+
+  <div id="sidebarMenu">
+    <ul>
+      <li><a href="index_final.html" style="border: 2px solid rgb(56, 70, 54);">MATCH COLOUR'S</a></li>
+      <li><a href="gradient.html" style="border: 2px solid rgb(56, 70, 54);">GRADIENT</a></li>
+    </ul>
+  </div>
+
+  <script>
+    const menuToggle = document.getElementById('menuToggle');
+    const menu = document.getElementById('sidebarMenu');
+
+    menuToggle.onclick = (e) => {
+      e.stopPropagation();
+      menu.style.left = menu.style.left === '20px' ? '-300px' : '20px';
+    };
+
+    function closeMenu(e) {
+      if (!menu.contains(e.target) && menu.style.left === '20px') {
+        menu.style.left = '-300px';
+      }
+    }
+
+    function renderColorInputs() {
+      const container = document.getElementById("colorContainer");
+      const count = parseInt(document.getElementById("colorCount").value);
+      container.innerHTML = "";
+
+      for (let i = 0; i < count; i++) {
+        const input = document.createElement("input");
+        input.type = "color"; input.className = "gradient-color gradient-small-box"; input.value = "#7c7c7c";
+        input.oninput = updateGradient;
+        container.appendChild(input);
+      }
+    }
+
+    function updateGradient() {
+      const colors = Array.from(document.querySelectorAll('.gradient-color'))
+        .map(input => input.value)
+        .filter(val => val);
+
+      if (colors.length >= 2) {
+        document.getElementById('gradientPreview').style.background = `linear-gradient(to right, ${colors.join(',')})`;
+      }
+    }
+
+    // init on load
+    renderColorInputs();
+  </script>
+
+<script>
+  function showOverlayThenReload() {
+    const overlay = document.getElementById("overlay");
+    overlay.classList.add("show");
+    setTimeout(() => location.reload(), 600);
+  }
+
+  document.querySelector('.v1_5').addEventListener('click', showOverlayThenReload);
+  document.querySelector('.v1_9').addEventListener('click', showOverlayThenReload);
+
+  window.addEventListener('load', () => {
+    const overlay = document.getElementById('overlay');
+    if (overlay) {
+      overlay.classList.add('show');
+      setTimeout(() => {
+        overlay.classList.remove('show');
+        setTimeout(() => overlay.remove(), 500);
+      }, 500);
+    }
+  });
+
+  // Анимация кружка v1_17
+  const rgbCircle = document.querySelector('.v1_17');
+  if (rgbCircle) {
+    rgbCircle.addEventListener('click', () => {
+      rgbCircle.classList.add('animate');
+      setTimeout(() => {
+        rgbCircle.classList.remove('animate');
+      }, 800);
+    });
+  }
+</script>
+<style>
+  #overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backdrop-filter: blur(0px);
+    background-color: rgba(0, 0, 0, 0);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+    opacity: 0;
+    transition:
+      backdrop-filter 0.5s ease,
+      background-color 0.5s ease,
+      opacity 0.5s ease;
+  }
+
+  #overlay.show {
+    backdrop-filter: blur(20px);
+    background-color: rgba(0, 0, 0, 0.4);
+    opacity: 1;
+  }
+
+  .overlay-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: white;
+    font-family: Inter, sans-serif;
+    opacity: 0;
+    transform: scale(0.9);
+    transition:
+      opacity 0.5s ease,
+      transform 0.5s ease;
+  }
+
+  #overlay.show .overlay-text {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .v1_17.animate {
+    animation: bounceAndSpin 0.9s cubic-bezier(0.33, 0.66, 0.66, 1) forwards;
+  }
+
+  @keyframes bounceAndSpin {
+    0% { transform: translateY(0) scaleY(1) rotate(0deg); }
+    10% { transform: translateY(-5px) scaleY(1.05) rotate(90deg); }
+    30% { transform: translateY(-25px) scaleY(0.95) rotate(180deg); }
+    50% { transform: translateY(0px) scaleY(1.1) rotate(270deg); }
+    65% { transform: translateY(-12px) scaleY(0.97) rotate(330deg); }
+    80% { transform: translateY(0px) scaleY(1.02) rotate(360deg); }
+    100% { transform: translateY(0) scaleY(1) rotate(360deg); }
+  }
+</style>
+  <script>
+  document.querySelector('.v1_5').addEventListener('click', () => {
+    location.reload(); 
+  });
+</script>
+  <script>
+  document.querySelector('.v1_9').addEventListener('click', () => {
+    location.reload(); 
+  });
+</script>
+
+</body>
+</html>
