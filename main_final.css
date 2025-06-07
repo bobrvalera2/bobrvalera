@@ -48,7 +48,7 @@ body {
   top: 149px;
   left: 22px;
     background: rgba(255, 255, 255, 0.2); 
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(10px);
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
   border-bottom-left-radius: 30px;
